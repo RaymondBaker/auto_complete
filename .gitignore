@@ -1,0 +1,15 @@
+.dub
+docs.json
+__dummy.html
+docs/
+/auto_complete
+auto_complete.so
+auto_complete.dylib
+auto_complete.dll
+auto_complete.a
+auto_complete.lib
+auto_complete-test-*
+*.exe
+*.o
+*.obj
+*.lst
