@@ -2,6 +2,7 @@ import std.stdio;
 import std.conv;
 import std.algorithm;
 import std.array: array;
+import std.string : format;
 
 
 struct Node {
@@ -56,20 +57,26 @@ void make_word(char[] word, Node* node) {
 
 string [] auto_complete(string word, Node* node) {
     Node* cur_node = node;
-    foreach (letter; word) {
+    int i = 0;
+    while (i < word.length) {
+        auto letter = word[i];
+        if (cur_node == null) {
+            stderr.writeln("Failure in auto complete: ended on null node");
+            return [word];
+        }
         if (cur_node.center == null && cur_node.left == null && cur_node.right == null)
             return [word];
-        if (letter > node.val) {
+
+        if (letter > cur_node.val) {
             cur_node = cur_node.right;
-            cur_node = cur_node.center;
         }
-        else if (letter < node.val) {
+        else if (letter < cur_node.val) {
             cur_node = cur_node.left;
-            // this messes it up the word is not in the map
-            cur_node = cur_node.center;
         }
-        else 
+        else {
             cur_node = cur_node.center;
+            i++;
+        }
     }
     return map!( suffix => word ~ suffix )(traversal(cur_node)).array;
 }
@@ -111,16 +118,40 @@ bool add_word (char[] word, Node* node) {
     return false;
 }
 
-void main() {
+int main(string [] args) {
+
+    if (args.length < 2) {
+        stderr.writeln(args.length);
+        stderr.writeln("Please give a word to autocomplete.\nauto_complete <word> <word> ...");
+        return 1;
+    }
+
+
     Node root;
     root.val = 't';
     root.tail = false;
 
-    add_word("test".dup, &root);
-    add_word("nipples".dup, &root);
-    add_word("neat".dup, &root);
-    add_word("pineapple".dup, &root);
+    auto file = File("words.txt");
+    auto range = file.byLine();
 
-    writeln(traversal(&root, ""));
-    writeln(auto_complete("ne", &root));
+
+    int words_loaded = 0;
+    foreach (line; range)
+    {
+        if (line.length > 0) {
+            add_word(line, &root);
+            words_loaded++;
+        }
+    }
+
+    writeln("loaded %s words".format(words_loaded));
+
+    //add_word("nipples".dup, &root);
+    //add_word("neat".dup, &root);
+    //add_word("pineapple".dup, &root);
+
+    //writeln(traversal(&root));
+    foreach (word; args[1..$])
+        writeln(auto_complete(word, &root));
+    return 0;
 }
