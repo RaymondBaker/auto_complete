@@ -160,7 +160,7 @@ int main(string [] args) {
     root.val = 't';
     root.tail = false;
 
-    auto file = File("words_shuffle.txt");
+    auto file = File("words.txt");
     auto range = file.byLine();
 
 
