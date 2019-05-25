@@ -3,6 +3,9 @@ import std.conv;
 import std.algorithm;
 import std.array: array;
 import std.string : format;
+import std.container : DList;
+import std.math : cbrt, floor;
+//import Containers;
 
 
 struct Node {
@@ -21,6 +24,31 @@ struct Node {
 //    if (node.right != null)
 //        output ~= traversal(node.right);
 //    return output;
+//}
+
+//void debug_print(Node* node) {
+//    // print visualization to see how liver is failing
+//    string [][] output;
+//    auto node_pointers = Queue!(Node*)();
+//    node_pointers.enqueue(node);
+//
+//    int node_cnt = 0;
+//    while (node_pointers.front != null) {
+//        node_cnt++;
+//        auto cur_node = node_pointers.dequeue;
+//        //go left to right for free ordering
+//        //insert children nodes
+//        if (cur_node == null) {
+//            output[cast(ulong)floor(cbrt(node_cnt))] ~= "".dup;
+//            continue;
+//        }
+//        
+//        output[cast(ulong)floor(cbrt(node_cnt))] ~= to!string(cur_node.val);
+//        node_pointers.enqueue(cur_node.left);
+//        node_pointers.enqueue(cur_node.center);
+//        node_pointers.enqueue(cur_node.right);
+//    }
+//
 //}
 
 string [] traversal(Node* node, string cur_word = "") {
@@ -95,7 +123,8 @@ bool add_word (char[] word, Node* node) {
         } else {
             // root is being set as tail because of last line
             // checking this twice need to fix
-            if (word.length == 1)
+            // seems to be setting incorrect tails
+            if (word.length == 0)
                 node.tail = true;
         }
     } else if (word[0] > node.val) {
@@ -103,7 +132,7 @@ bool add_word (char[] word, Node* node) {
             node.right = new Node;
             make_word(word, node.right);
         } else {
-            if (word.length == 1)
+            if (word.length == 0)
                 node.tail = true;
         }
     } else {
@@ -111,7 +140,7 @@ bool add_word (char[] word, Node* node) {
             node.left = new Node;
             make_word(word, node.left);
         } else {
-            if (word.length == 1)
+            if (word.length == 0)
                 node.tail = true;
         }
     }
@@ -153,5 +182,6 @@ int main(string [] args) {
     //writeln(traversal(&root));
     foreach (word; args[1..$])
         writeln(auto_complete(word, &root));
+    //debug_print(&root);
     return 0;
 }
